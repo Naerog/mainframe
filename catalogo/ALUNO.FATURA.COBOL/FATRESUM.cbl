@@ -70,15 +70,7 @@
            PERFORM 8000-LER-DIVERGENCIA
                 THRU 8000-FIM-LER-DIVERGENCIA
            .
-
        1000-FIM-INICIALIZAR.
-           EXIT
-           .
-       9900-ENCERRAR-COM-ERRO.
-           MOVE 16 TO RETURN-CODE
-           STOP RUN
-           .
-       9900-FIM-ENCERRAR.
            EXIT
            .
 
@@ -107,6 +99,9 @@
            *> Le a proxima linha
            PERFORM 8000-LER-DIVERGENCIA
                 THRU 8000-FIM-LER-DIVERGENCIA
+           .
+       2000-FIM-PROCESSAR.
+           EXIT
            .
        
        3000-FINALIZAR.
@@ -151,6 +146,10 @@
            DISPLAY 'VALOR TOTAL PAGO:     ' WS-PAGO-TOTAL
            DISPLAY '=================================================='
            .
+       3000-FIM-FINALIZAR.
+           EXIT
+           .
+
        8000-LER-DIVERGENCIA.
            READ ARQ-DIVERG
                 AT END
@@ -165,12 +164,14 @@
                  THRU 9900-FIM-ENCERRAR
            END-IF
            .
-
-       2000-FIM-PROCESSAR.
-           EXIT.
-
-       3000-FIM-FINALIZAR.
-           EXIT.
-
        8000-FIM-LER-DIVERGENCIA.
-           EXIT.
+           EXIT
+           .
+
+       9900-ENCERRAR-COM-ERRO.
+           MOVE 16 TO RETURN-CODE
+           STOP RUN
+           .
+       9900-FIM-ENCERRAR.
+           EXIT
+           .
