@@ -17,13 +17,17 @@
       * AULA 9, COM O SUBPROGRAMA LUHNVALD.                            *
       *================================================================*
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. FATRESUM.
+       PROGRAM-ID. FATFILTR.
 
        ENVIRONMENT DIVISION.
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
-           SELECT ARQ-DIVERG  ASSIGN TO DIVIN
+           SELECT TRANS-ENTRADA  ASSIGN TO TRANSIN
                   FILE STATUS IS WS-FS-ENTRADA.
+           SELECT TRANS-APROVADA ASSIGN TO APROVOUT
+                  FILE STATUS IS WS-FS-APROVADA.
+           SELECT TRANS-REJEITADA ASSIGN TO REJEIOUT
+                  FILE STATUS IS WS-FS-REJEITADA.
 
        DATA DIVISION.
        FILE SECTION.

@@ -1,0 +1,216 @@
+GnuCOBOL 3.3-dev.0      sistema\work\FATRESU Wed Nov 11 2026 09:53:55  Page 0001
+
+LINE    PG/LN  A...B............................................................
+
+000001        *================================================================*
+000002        * PROGRAMA : FATRESUM                                            *
+000003        * AULA     : ENTREGA DESAFIO 10                                  *
+000004        *================================================================*
+000005         IDENTIFICATION DIVISION.
+000006         PROGRAM-ID. FATRESUM.
+000007
+000008         ENVIRONMENT DIVISION.
+000009         INPUT-OUTPUT SECTION.
+000010         FILE-CONTROL.
+000011             SELECT ARQ-DIVERG  ASSIGN TO DIVIN *> vou chamar o ARQ-DIVERG
+000012                    FILE STATUS IS WS-FS-ENTRADA.
+000013
+000014         DATA DIVISION.
+000015         FILE SECTION.
+000016         FD  ARQ-DIVERG *> oq esta a seguir dita as regras do resto
+000017             RECORDING MODE IS F. *> seta que é fixo
+000018             COPY CPDIVER.
+000001C       *================================================================*
+000002C       * CPDIVER  - DIVERGENCIA DA CONCILIACAO DE PAGAMENTOS            *
+000003C       * LRECL 80, RECFM FB.                                            *
+000004C       *================================================================*
+000005C        01  REG-DIVERGENCIA.
+000006C            05  DV-NUM-CARTAO-MASC     PIC X(16).
+000007C            05  DV-TIPO                PIC X(02).
+000008C                88  DV-PAGTO-SEM-FATURA          VALUE 'PS'.
+000009C                88  DV-FATURA-SEM-PAGTO          VALUE 'FS'.
+000010C                88  DV-PAGTO-A-MENOR             VALUE 'PM'.
+000011C            05  DV-VALOR-FATURA        PIC 9(09)V99.
+000012C            05  DV-VALOR-PAGO          PIC 9(09)V99.
+000013C            05  FILLER                 PIC X(40).
+000019
+000020         WORKING-STORAGE SECTION.
+000021         01 WS-FS-ENTRADA                  PIC XX.
+000022             88  WS-FS-ENTRADA-OK          VALUE '00'.
+000023             88  WS-FS-ENTRADA-FIM         VALUE '10'.
+000024         *> acima recebe o filestatus
+000025
+000026         01 WS-CONTADORES-QTD.
+000027               05 WS-QTD-LIDOS        PIC 9(05) VALUE ZEROS.
+000028               05 WS-QTD-PS           PIC 9(05) VALUE ZEROS.
+000029               05 WS-QTD-FS           PIC 9(05) VALUE ZEROS.
+000030               05 WS-QTD-PM           PIC 9(05) VALUE ZEROS.
+000031
+000032         01  WS-ACUMULADORES-VALORES.
+000033             05  WS-FATURA-PS         PIC 9(11)V99 VALUE ZEROS.
+000034             05  WS-PAGO-PS           PIC 9(11)V99 VALUE ZEROS.
+000035             05  WS-FATURA-FS         PIC 9(11)V99 VALUE ZEROS.
+000036             05  WS-PAGO-FS           PIC 9(11)V99 VALUE ZEROS.
+000037             05  WS-FATURA-PM         PIC 9(11)V99 VALUE ZEROS.
+000038             05  WS-PAGO-PM           PIC 9(11)V99 VALUE ZEROS.
+000039             05  WS-FATURA-TOTAL      PIC 9(11)V99 VALUE ZEROS.
+GnuCOBOL 3.3-dev.0      sistema\work\FATRESU Wed Nov 11 2026 09:53:55  Page 0002
+
+LINE    PG/LN  A...B............................................................
+
+000040             05  WS-PAGO-TOTAL        PIC 9(11)V99 VALUE ZEROS.
+000041
+000042         PROCEDURE DIVISION.
+000043
+000044         0000-PRINCIPAL.
+000045             PERFORM 1000-INICIALIZAR
+000046                THRU 1000-FIM-INICIALIZAR
+000047
+000048             PERFORM 2000-PROCESSAR
+000049                THRU 2000-FIM-PROCESSAR
+000050                UNTIL WS-FS-ENTRADA-FIM
+000051
+000052             PERFORM 3000-FINALIZAR
+000053                THRU 3000-FIM-FINALIZAR
+000054
+000055             STOP RUN
+000056             .
+000057
+000058         1000-INICIALIZAR.
+000059             OPEN INPUT ARQ-DIVERG
+000060
+000061             *> testar o File Status do OPEN
+000062             IF NOT WS-FS-ENTRADA-OK
+000063                DISPLAY 'FATRESUM - ERRO NO OPEN DE DIVIN. FS='
+000064                       WS-FS-ENTRADA
+000065                PERFORM 9900-ENCERRAR-COM-ERRO
+000066                   THRU 9900-FIM-ENCERRAR
+000067             END-IF
+000068
+000069             *> primeira leitura antes de entrar no processar
+000070             PERFORM 8000-LER-DIVERGENCIA
+000071                  THRU 8000-FIM-LER-DIVERGENCIA
+000072             .
+000073
+000074         1000-FIM-INICIALIZAR.
+000075             EXIT
+000076             .
+000077         9900-ENCERRAR-COM-ERRO.
+000078             MOVE 16 TO RETURN-CODE
+000079             STOP RUN
+000080             .
+000081         9900-FIM-ENCERRAR.
+000082             EXIT
+000083             .
+000084
+000085         2000-PROCESSAR.
+000086             *> avalia o tipo de registro
+000087             EVALUATE TRUE
+000088                WHEN DV-PAGTO-SEM-FATURA
+000089                      ADD 1                 TO WS-QTD-PS
+000090                      ADD DV-VALOR-FATURA   TO WS-FATURA-PS
+000091                      ADD DV-VALOR-PAGO     TO WS-PAGO-PS
+GnuCOBOL 3.3-dev.0      sistema\work\FATRESU Wed Nov 11 2026 09:53:55  Page 0003
+
+LINE    PG/LN  A...B............................................................
+
+000092
+000093                WHEN DV-FATURA-SEM-PAGTO
+000094                      ADD 1                TO WS-QTD-FS
+000095                      ADD DV-VALOR-FATURA   TO WS-FATURA-FS
+000096                      ADD DV-VALOR-PAGO     TO WS-PAGO-FS
+000097
+000098                WHEN DV-PAGTO-A-MENOR
+000099                      ADD 1                 TO WS-QTD-PM
+000100                      ADD DV-VALOR-FATURA   TO WS-FATURA-PM
+000101                      ADD DV-VALOR-PAGO     TO WS-PAGO-PM
+000102             END-EVALUATE
+000103
+000104             *> soma o total de lidos nessa linha
+000105             ADD 1 TO WS-QTD-LIDOS
+000106
+000107             *> Le a proxima linha
+000108             PERFORM 8000-LER-DIVERGENCIA
+000109                  THRU 8000-FIM-LER-DIVERGENCIA
+000110             .
+000111
+000112         3000-FINALIZAR.
+000113             *> fecha o arquivo
+000114             CLOSE ARQ-DIVERG
+000115             IF NOT WS-FS-ENTRADA-OK
+000116                DISPLAY 'FATRESUM - ERRO NO CLOSE DE DIVIN. FS='
+000117                       WS-FS-ENTRADA
+000118                PERFORM 9900-ENCERRAR-COM-ERRO
+000119                   THRU 9900-FIM-ENCERRAR
+000120             END-IF
+000121
+000122             *> soma os totais gerais
+000123             ADD WS-FATURA-PS WS-FATURA-FS WS-FATURA-PM
+000124                GIVING WS-FATURA-TOTAL
+000125             ADD WS-PAGO-PS WS-PAGO-FS WS-PAGO-PM
+000126                GIVING WS-PAGO-TOTAL
+000127
+000128             *> imprimir o relatorio
+000129             DISPLAY '=================================================='
+000130             DISPLAY '   RESUMO DE DIVERGENCIAS'
+000131             DISPLAY '=================================================='
+000132             DISPLAY 'TOTAL DE REGISTROS LIDOS: ' WS-QTD-LIDOS
+000133             DISPLAY ' '
+000134             DISPLAY '--- PAGAMENTOS SEM FATURA (PS) ---'
+000135             DISPLAY 'QTD: ' WS-QTD-PS
+000136             DISPLAY 'VALOR DA FATURA: ' WS-FATURA-PS
+000137             DISPLAY 'VALOR PAGO:      ' WS-PAGO-PS
+000138             DISPLAY ' '
+000139             DISPLAY '--- FATURAS SEM PAGAMENTO (FS) ---'
+000140             DISPLAY 'QTD: ' WS-QTD-FS
+000141             DISPLAY 'VALOR DA FATURA: ' WS-FATURA-FS
+000142             DISPLAY 'VALOR PAGO:      ' WS-PAGO-FS
+000143             DISPLAY ' '
+GnuCOBOL 3.3-dev.0      sistema\work\FATRESU Wed Nov 11 2026 09:53:55  Page 0004
+
+LINE    PG/LN  A...B............................................................
+
+000144             DISPLAY '--- PAGAMENTOS A MENOR (PM) ------'
+000145             DISPLAY 'QTD: ' WS-QTD-PM
+000146             DISPLAY 'VALOR DA FATURA: ' WS-FATURA-PM
+000147             DISPLAY 'VALOR PAGO:      ' WS-PAGO-PM
+000148             DISPLAY ' '
+000149             DISPLAY '--- TOTAIS GERAIS ----------------'
+000150             DISPLAY 'VALOR TOTAL FATURADO: ' WS-FATURA-TOTAL
+000151             DISPLAY 'VALOR TOTAL PAGO:     ' WS-PAGO-TOTAL
+000152             DISPLAY '=================================================='
+000153             .
+000154         8000-LER-DIVERGENCIA.
+000155             READ ARQ-DIVERG
+000156                  AT END
+000157                     CONTINUE
+000158             END-READ
+000159
+000160             *> teste de file status apos a leitura
+000161             IF NOT WS-FS-ENTRADA-OK AND NOT WS-FS-ENTRADA-FIM
+000162                DISPLAY 'FATRESUM - ERRO NO READ. FS='
+000163                          WS-FS-ENTRADA
+000164                PERFORM 9900-ENCERRAR-COM-ERRO
+000165                   THRU 9900-FIM-ENCERRAR
+000166             END-IF
+000167             .
+000168
+000169         2000-FIM-PROCESSAR.
+000170             EXIT.
+000171
+000172         3000-FIM-FINALIZAR.
+000173             EXIT.
+000174
+000175         8000-FIM-LER-DIVERGENCIA.
+000176             EXIT.
+warning: line not terminated by a newline
+
+
+GnuCOBOL 3.3-dev.0      sistema\work\FATRESU Wed Nov 11 2026 09:53:55  Page 0005
+
+Error/Warning summary:
+
+sistema\work\FATRESUM.cbl:176: warning: line not terminated by a newline
+
+1 warning in compilation group
+0 errors in compilation group
