@@ -6,11 +6,14 @@
        PROGRAM-ID. FATRESUM.
 
        ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SPECIAL-NAMES.
+           DECIMAL-POINT IS COMMA.
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
            SELECT ARQ-DIVERG  ASSIGN TO DIVIN *> vou chamar o ARQ-DIVERG
                   FILE STATUS IS WS-FS-ENTRADA.
-
+       
        DATA DIVISION.
        FILE SECTION.
        FD  ARQ-DIVERG *> oq esta a seguir dita as regras do resto
@@ -38,6 +41,11 @@
            05  WS-PAGO-PM           PIC 9(11)V99 VALUE ZEROS.
            05  WS-FATURA-TOTAL      PIC 9(11)V99 VALUE ZEROS.
            05  WS-PAGO-TOTAL        PIC 9(11)V99 VALUE ZEROS.
+
+       01  WS-MASCARAS-RELAT.
+           05  WS-MASK-QTD          PIC ZZ9.
+           05  WS-MASK-FATURA       PIC ZZZ.ZZZ.ZZ9,99.
+           05  WS-MASK-PAGO         PIC ZZZ.ZZZ.ZZ9,99.
 
        PROCEDURE DIVISION.
 
@@ -124,26 +132,42 @@
            DISPLAY '=================================================='
            DISPLAY '   RESUMO DE DIVERGENCIAS'
            DISPLAY '=================================================='
-           DISPLAY 'TOTAL DE REGISTROS LIDOS: ' WS-QTD-LIDOS
+           MOVE WS-QTD-LIDOS TO WS-MASK-QTD
+           DISPLAY 'TOTAL DE REGISTROS LIDOS: ' WS-MASK-QTD
            DISPLAY ' '
+           
            DISPLAY '--- PAGAMENTOS SEM FATURA (PS) ---'
-           DISPLAY 'QTD: ' WS-QTD-PS
-           DISPLAY 'VALOR DA FATURA: ' WS-FATURA-PS
-           DISPLAY 'VALOR PAGO:      ' WS-PAGO-PS
+           MOVE WS-QTD-PS      TO WS-MASK-QTD
+           MOVE WS-FATURA-PS   TO WS-MASK-FATURA
+           MOVE WS-PAGO-PS     TO WS-MASK-PAGO
+           DISPLAY 'QTD: ' WS-MASK-QTD
+           DISPLAY 'VALOR DA FATURA: R$ ' WS-MASK-FATURA
+           DISPLAY 'VALOR PAGO:      R$ ' WS-MASK-PAGO
            DISPLAY ' '
+           
            DISPLAY '--- FATURAS SEM PAGAMENTO (FS) ---'
-           DISPLAY 'QTD: ' WS-QTD-FS
-           DISPLAY 'VALOR DA FATURA: ' WS-FATURA-FS
-           DISPLAY 'VALOR PAGO:      ' WS-PAGO-FS
+           MOVE WS-QTD-FS      TO WS-MASK-QTD
+           MOVE WS-FATURA-FS   TO WS-MASK-FATURA
+           MOVE WS-PAGO-FS     TO WS-MASK-PAGO
+           DISPLAY 'QTD: ' WS-MASK-QTD
+           DISPLAY 'VALOR DA FATURA: R$ ' WS-MASK-FATURA
+           DISPLAY 'VALOR PAGO:      R$ ' WS-MASK-PAGO
            DISPLAY ' '
+           
            DISPLAY '--- PAGAMENTOS A MENOR (PM) ------'
-           DISPLAY 'QTD: ' WS-QTD-PM
-           DISPLAY 'VALOR DA FATURA: ' WS-FATURA-PM
-           DISPLAY 'VALOR PAGO:      ' WS-PAGO-PM
+           MOVE WS-QTD-PM      TO WS-MASK-QTD
+           MOVE WS-FATURA-PM   TO WS-MASK-FATURA
+           MOVE WS-PAGO-PM     TO WS-MASK-PAGO
+           DISPLAY 'QTD: ' WS-MASK-QTD
+           DISPLAY 'VALOR DA FATURA: R$ ' WS-MASK-FATURA
+           DISPLAY 'VALOR PAGO:      R$ ' WS-MASK-PAGO
            DISPLAY ' '
+           
            DISPLAY '--- TOTAIS GERAIS ----------------'
-           DISPLAY 'VALOR TOTAL FATURADO: ' WS-FATURA-TOTAL
-           DISPLAY 'VALOR TOTAL PAGO:     ' WS-PAGO-TOTAL
+           MOVE WS-FATURA-TOTAL TO WS-MASK-FATURA
+           MOVE WS-PAGO-TOTAL   TO WS-MASK-PAGO
+           DISPLAY 'VALOR TOTAL FATURADO: R$ ' WS-MASK-FATURA
+           DISPLAY 'VALOR TOTAL PAGO:     R$ ' WS-MASK-PAGO
            DISPLAY '=================================================='
            .
        3000-FIM-FINALIZAR.
