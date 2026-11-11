@@ -1,4 +1,4 @@
-GnuCOBOL 3.3-dev.0      sistema\work\FATFILT Wed Nov 04 2026 21:07:48  Page 0001
+GnuCOBOL 3.3-dev.0      sistema\work\FATFILT Mon Nov 09 2026 17:49:03  Page 0001
 
 LINE    PG/LN  A...B............................................................
 
@@ -54,7 +54,7 @@ LINE    PG/LN  A...B............................................................
 000014C            05  TR-MCC                 PIC 9(04).
 000015C            05  TR-PAIS                PIC X(03).
 000016C                88  TR-NACIONAL                  VALUE 'BRA'.
-GnuCOBOL 3.3-dev.0      sistema\work\FATFILT Wed Nov 04 2026 21:07:48  Page 0002
+GnuCOBOL 3.3-dev.0      sistema\work\FATFILT Mon Nov 09 2026 17:49:03  Page 0002
 
 LINE    PG/LN  A...B............................................................
 
@@ -110,7 +110,7 @@ LINE    PG/LN  A...B............................................................
 000049             88  WS-FS-APR-OK                     VALUE '00'.
 000050         01  WS-FS-REJEITADA            PIC X(02).
 000051             88  WS-FS-REJ-OK                     VALUE '00'.
-GnuCOBOL 3.3-dev.0      sistema\work\FATFILT Wed Nov 04 2026 21:07:48  Page 0003
+GnuCOBOL 3.3-dev.0      sistema\work\FATFILT Mon Nov 09 2026 17:49:03  Page 0003
 
 LINE    PG/LN  A...B............................................................
 
@@ -166,7 +166,7 @@ LINE    PG/LN  A...B............................................................
 000093         1000-INICIALIZAR.
 000094
 000095             OPEN INPUT TRANS-ENTRADA
-GnuCOBOL 3.3-dev.0      sistema\work\FATFILT Wed Nov 04 2026 21:07:48  Page 0004
+GnuCOBOL 3.3-dev.0      sistema\work\FATFILT Mon Nov 09 2026 17:49:03  Page 0004
 
 LINE    PG/LN  A...B............................................................
 
@@ -222,7 +222,7 @@ LINE    PG/LN  A...B............................................................
 000145         2100-VALIDAR-TRANSACAO.
 000146
 000147             MOVE SPACES TO REG-REJEITADA
-GnuCOBOL 3.3-dev.0      sistema\work\FATFILT Wed Nov 04 2026 21:07:48  Page 0005
+GnuCOBOL 3.3-dev.0      sistema\work\FATFILT Mon Nov 09 2026 17:49:03  Page 0005
 
 LINE    PG/LN  A...B............................................................
 
@@ -278,7 +278,7 @@ LINE    PG/LN  A...B............................................................
 000197             MOVE TR-DATA-TRANSACAO TO TI-DATA-TRANSACAO
 000198             MOVE TR-HORA-TRANSACAO TO TI-HORA-TRANSACAO
 000199             MOVE TR-VALOR TO TI-VALOR
-GnuCOBOL 3.3-dev.0      sistema\work\FATFILT Wed Nov 04 2026 21:07:48  Page 0006
+GnuCOBOL 3.3-dev.0      sistema\work\FATFILT Mon Nov 09 2026 17:49:03  Page 0006
 
 LINE    PG/LN  A...B............................................................
 
@@ -334,7 +334,7 @@ LINE    PG/LN  A...B............................................................
 000249             CLOSE TRANS-REJEITADA
 000250             IF NOT WS-FS-REJ-OK
 000251                 DISPLAY 'FATFILTR - ERRO DE CLOSE TRANS-REJEITADA'
-GnuCOBOL 3.3-dev.0      sistema\work\FATFILT Wed Nov 04 2026 21:07:48  Page 0007
+GnuCOBOL 3.3-dev.0      sistema\work\FATFILT Mon Nov 09 2026 17:49:03  Page 0007
 
 LINE    PG/LN  A...B............................................................
 
@@ -387,7 +387,7 @@ LINE    PG/LN  A...B............................................................
 warning: line not terminated by a newline
 
 
-GnuCOBOL 3.3-dev.0      sistema\work\FATFILT Wed Nov 04 2026 21:07:48  Page 0008
+GnuCOBOL 3.3-dev.0      sistema\work\FATFILT Mon Nov 09 2026 17:49:03  Page 0008
 
 Error/Warning summary:
 
