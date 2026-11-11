@@ -31,6 +31,8 @@
              05 WS-QTD-PS           PIC 9(05) VALUE ZEROS.
              05 WS-QTD-FS           PIC 9(05) VALUE ZEROS.
              05 WS-QTD-PM           PIC 9(05) VALUE ZEROS.
+             05 WS-QTD-PROVA        PIC 9(05) VALUE ZEROS.
+             *> acima variavel pra ver se a soma bate com o total lido
        
        01  WS-ACUMULADORES-VALORES.
            05  WS-FATURA-PS         PIC 9(11)V99 VALUE ZEROS.
@@ -91,7 +93,7 @@
                     ADD DV-VALOR-PAGO     TO WS-PAGO-PS
               
               WHEN DV-FATURA-SEM-PAGTO
-                    ADD 1                TO WS-QTD-FS
+                    ADD 1                 TO WS-QTD-FS
                     ADD DV-VALOR-FATURA   TO WS-FATURA-FS
                     ADD DV-VALOR-PAGO     TO WS-PAGO-FS
               
@@ -99,6 +101,11 @@
                     ADD 1                 TO WS-QTD-PM
                     ADD DV-VALOR-FATURA   TO WS-FATURA-PM
                     ADD DV-VALOR-PAGO     TO WS-PAGO-PM
+                    
+              WHEN OTHER
+                    DISPLAY 'FATRESUM - TIPO DESCONHECIDO (RC=16).'
+                    PERFORM 9900-ENCERRAR-COM-ERRO
+                       THRU 9900-FIM-ENCERRAR
            END-EVALUATE
 
            *> soma o total de lidos nessa linha
@@ -118,6 +125,17 @@
            IF NOT WS-FS-ENTRADA-OK
               DISPLAY 'FATRESUM - ERRO NO CLOSE DE DIVIN. FS='
                      WS-FS-ENTRADA
+              PERFORM 9900-ENCERRAR-COM-ERRO
+                 THRU 9900-FIM-ENCERRAR
+           END-IF
+
+           *> prova real matematica das quantidades
+           ADD WS-QTD-PS WS-QTD-FS WS-QTD-PM
+              GIVING WS-QTD-PROVA
+              
+           IF WS-QTD-PROVA NOT = WS-QTD-LIDOS
+              DISPLAY 'FATRESUM - ERRO PROVA REAL (RC=16). SOMA='
+                     WS-QTD-PROVA ' LIDOS=' WS-QTD-LIDOS
               PERFORM 9900-ENCERRAR-COM-ERRO
                  THRU 9900-FIM-ENCERRAR
            END-IF
