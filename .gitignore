@@ -13,3 +13,5 @@ Desktop.ini
 *.exe
 *.out
 *.obj
+*.o
+*.lst

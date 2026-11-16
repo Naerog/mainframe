@@ -1,4 +1,4 @@
-GnuCOBOL 3.3-dev.0      sistema\work\FATRESU Wed Nov 11 2026 10:18:34  Page 0001
+GnuCOBOL 3.3-dev.0      sistema\work\FATRESU Wed Nov 11 2026 17:31:50  Page 0001
 
 LINE    PG/LN  A...B............................................................
 
@@ -48,198 +48,216 @@ LINE    PG/LN  A...B............................................................
 000031               05 WS-QTD-PS           PIC 9(05) VALUE ZEROS.
 000032               05 WS-QTD-FS           PIC 9(05) VALUE ZEROS.
 000033               05 WS-QTD-PM           PIC 9(05) VALUE ZEROS.
-000034
-000035         01  WS-ACUMULADORES-VALORES.
-000036             05  WS-FATURA-PS         PIC 9(11)V99 VALUE ZEROS.
-000037             05  WS-PAGO-PS           PIC 9(11)V99 VALUE ZEROS.
-000038             05  WS-FATURA-FS         PIC 9(11)V99 VALUE ZEROS.
-000039             05  WS-PAGO-FS           PIC 9(11)V99 VALUE ZEROS.
-GnuCOBOL 3.3-dev.0      sistema\work\FATRESU Wed Nov 11 2026 10:18:34  Page 0002
+000034               05 WS-QTD-PROVA        PIC 9(05) VALUE ZEROS.
+000035               *> acima variavel pra ver se a soma bate com o total lido
+000036
+000037         01  WS-ACUMULADORES-VALORES.
+000038             05  WS-FATURA-PS         PIC 9(11)V99 VALUE ZEROS.
+000039             05  WS-PAGO-PS           PIC 9(11)V99 VALUE ZEROS.
+GnuCOBOL 3.3-dev.0      sistema\work\FATRESU Wed Nov 11 2026 17:31:50  Page 0002
 
 LINE    PG/LN  A...B............................................................
 
-000040             05  WS-FATURA-PM         PIC 9(11)V99 VALUE ZEROS.
-000041             05  WS-PAGO-PM           PIC 9(11)V99 VALUE ZEROS.
-000042             05  WS-FATURA-TOTAL      PIC 9(11)V99 VALUE ZEROS.
-000043             05  WS-PAGO-TOTAL        PIC 9(11)V99 VALUE ZEROS.
-000044
-000045         01  WS-MASCARAS-RELAT.
-000046             05  WS-MASK-QTD          PIC ZZ9.
-000047             05  WS-MASK-FATURA       PIC ZZZ.ZZZ.ZZ9,99.
-000048             05  WS-MASK-PAGO         PIC ZZZ.ZZZ.ZZ9,99.
-000049
-000050         PROCEDURE DIVISION.
+000040             05  WS-FATURA-FS         PIC 9(11)V99 VALUE ZEROS.
+000041             05  WS-PAGO-FS           PIC 9(11)V99 VALUE ZEROS.
+000042             05  WS-FATURA-PM         PIC 9(11)V99 VALUE ZEROS.
+000043             05  WS-PAGO-PM           PIC 9(11)V99 VALUE ZEROS.
+000044             05  WS-FATURA-TOTAL      PIC 9(11)V99 VALUE ZEROS.
+000045             05  WS-PAGO-TOTAL        PIC 9(11)V99 VALUE ZEROS.
+000046
+000047         01  WS-MASCARAS-RELAT.
+000048             05  WS-MASK-QTD          PIC ZZ9.
+000049             05  WS-MASK-FATURA       PIC ZZZ.ZZZ.ZZ9,99.
+000050             05  WS-MASK-PAGO         PIC ZZZ.ZZZ.ZZ9,99.
 000051
-000052         0000-PRINCIPAL.
-000053             PERFORM 1000-INICIALIZAR
-000054                THRU 1000-FIM-INICIALIZAR
-000055
-000056             PERFORM 2000-PROCESSAR
-000057                THRU 2000-FIM-PROCESSAR
-000058                UNTIL WS-FS-ENTRADA-FIM
-000059
-000060             PERFORM 3000-FINALIZAR
-000061                THRU 3000-FIM-FINALIZAR
-000062
-000063             STOP RUN
-000064             .
-000065
-000066         1000-INICIALIZAR.
-000067             OPEN INPUT ARQ-DIVERG
-000068
-000069             *> testar o File Status do OPEN
-000070             IF NOT WS-FS-ENTRADA-OK
-000071                DISPLAY 'FATRESUM - ERRO NO OPEN DE DIVIN. FS='
-000072                       WS-FS-ENTRADA
-000073                PERFORM 9900-ENCERRAR-COM-ERRO
-000074                   THRU 9900-FIM-ENCERRAR
-000075             END-IF
-000076
-000077             *> primeira leitura antes de entrar no processar
-000078             PERFORM 8000-LER-DIVERGENCIA
-000079                  THRU 8000-FIM-LER-DIVERGENCIA
-000080             .
-000081         1000-FIM-INICIALIZAR.
-000082             EXIT
-000083             .
-000084
-000085         2000-PROCESSAR.
-000086             *> avalia o tipo de registro
-000087             EVALUATE TRUE
-000088                WHEN DV-PAGTO-SEM-FATURA
-000089                      ADD 1                 TO WS-QTD-PS
-000090                      ADD DV-VALOR-FATURA   TO WS-FATURA-PS
-000091                      ADD DV-VALOR-PAGO     TO WS-PAGO-PS
-GnuCOBOL 3.3-dev.0      sistema\work\FATRESU Wed Nov 11 2026 10:18:34  Page 0003
+000052         PROCEDURE DIVISION.
+000053
+000054         0000-PRINCIPAL.
+000055             PERFORM 1000-INICIALIZAR
+000056                THRU 1000-FIM-INICIALIZAR
+000057
+000058             PERFORM 2000-PROCESSAR
+000059                THRU 2000-FIM-PROCESSAR
+000060                UNTIL WS-FS-ENTRADA-FIM
+000061
+000062             PERFORM 3000-FINALIZAR
+000063                THRU 3000-FIM-FINALIZAR
+000064
+000065             STOP RUN
+000066             .
+000067
+000068         1000-INICIALIZAR.
+000069             OPEN INPUT ARQ-DIVERG
+000070
+000071             *> testar o File Status do OPEN
+000072             IF NOT WS-FS-ENTRADA-OK
+000073                DISPLAY 'FATRESUM - ERRO NO OPEN DE DIVIN. FS='
+000074                       WS-FS-ENTRADA
+000075                PERFORM 9900-ENCERRAR-COM-ERRO
+000076                   THRU 9900-FIM-ENCERRAR
+000077             END-IF
+000078
+000079             *> primeira leitura antes de entrar no processar
+000080             PERFORM 8000-LER-DIVERGENCIA
+000081                  THRU 8000-FIM-LER-DIVERGENCIA
+000082             .
+000083         1000-FIM-INICIALIZAR.
+000084             EXIT
+000085             .
+000086
+000087         2000-PROCESSAR.
+000088             *> avalia o tipo de registro
+000089             EVALUATE TRUE
+000090                WHEN DV-PAGTO-SEM-FATURA
+000091                      ADD 1                 TO WS-QTD-PS
+GnuCOBOL 3.3-dev.0      sistema\work\FATRESU Wed Nov 11 2026 17:31:50  Page 0003
 
 LINE    PG/LN  A...B............................................................
 
-000092
-000093                WHEN DV-FATURA-SEM-PAGTO
-000094                      ADD 1                TO WS-QTD-FS
-000095                      ADD DV-VALOR-FATURA   TO WS-FATURA-FS
-000096                      ADD DV-VALOR-PAGO     TO WS-PAGO-FS
-000097
-000098                WHEN DV-PAGTO-A-MENOR
-000099                      ADD 1                 TO WS-QTD-PM
-000100                      ADD DV-VALOR-FATURA   TO WS-FATURA-PM
-000101                      ADD DV-VALOR-PAGO     TO WS-PAGO-PM
-000102             END-EVALUATE
-000103
-000104             *> soma o total de lidos nessa linha
-000105             ADD 1 TO WS-QTD-LIDOS
-000106
-000107             *> Le a proxima linha
-000108             PERFORM 8000-LER-DIVERGENCIA
-000109                  THRU 8000-FIM-LER-DIVERGENCIA
-000110             .
-000111         2000-FIM-PROCESSAR.
-000112             EXIT
-000113             .
-000114
-000115         3000-FINALIZAR.
-000116             *> fecha o arquivo
-000117             CLOSE ARQ-DIVERG
-000118             IF NOT WS-FS-ENTRADA-OK
-000119                DISPLAY 'FATRESUM - ERRO NO CLOSE DE DIVIN. FS='
-000120                       WS-FS-ENTRADA
-000121                PERFORM 9900-ENCERRAR-COM-ERRO
-000122                   THRU 9900-FIM-ENCERRAR
-000123             END-IF
-000124
-000125             *> soma os totais gerais
-000126             ADD WS-FATURA-PS WS-FATURA-FS WS-FATURA-PM
-000127                GIVING WS-FATURA-TOTAL
-000128             ADD WS-PAGO-PS WS-PAGO-FS WS-PAGO-PM
-000129                GIVING WS-PAGO-TOTAL
-000130
-000131             *> imprimir o relatorio
-000132             DISPLAY '=================================================='
-000133             DISPLAY '   RESUMO DE DIVERGENCIAS'
-000134             DISPLAY '=================================================='
-000135             MOVE WS-QTD-LIDOS TO WS-MASK-QTD
-000136             DISPLAY 'TOTAL DE REGISTROS LIDOS: ' WS-MASK-QTD
-000137             DISPLAY ' '
-000138
-000139             DISPLAY '--- PAGAMENTOS SEM FATURA (PS) ---'
-000140             MOVE WS-QTD-PS      TO WS-MASK-QTD
-000141             MOVE WS-FATURA-PS   TO WS-MASK-FATURA
-000142             MOVE WS-PAGO-PS     TO WS-MASK-PAGO
-000143             DISPLAY 'QTD: ' WS-MASK-QTD
-GnuCOBOL 3.3-dev.0      sistema\work\FATRESU Wed Nov 11 2026 10:18:34  Page 0004
+000092                      ADD DV-VALOR-FATURA   TO WS-FATURA-PS
+000093                      ADD DV-VALOR-PAGO     TO WS-PAGO-PS
+000094
+000095                WHEN DV-FATURA-SEM-PAGTO
+000096                      ADD 1                 TO WS-QTD-FS
+000097                      ADD DV-VALOR-FATURA   TO WS-FATURA-FS
+000098                      ADD DV-VALOR-PAGO     TO WS-PAGO-FS
+000099
+000100                WHEN DV-PAGTO-A-MENOR
+000101                      ADD 1                 TO WS-QTD-PM
+000102                      ADD DV-VALOR-FATURA   TO WS-FATURA-PM
+000103                      ADD DV-VALOR-PAGO     TO WS-PAGO-PM
+000104
+000105                WHEN OTHER
+000106                      DISPLAY 'FATRESUM - TIPO DESCONHECIDO (RC=16).'
+000107                      PERFORM 9900-ENCERRAR-COM-ERRO
+000108                         THRU 9900-FIM-ENCERRAR
+000109             END-EVALUATE
+000110
+000111             *> soma o total de lidos nessa linha
+000112             ADD 1 TO WS-QTD-LIDOS
+000113
+000114             *> Le a proxima linha
+000115             PERFORM 8000-LER-DIVERGENCIA
+000116                  THRU 8000-FIM-LER-DIVERGENCIA
+000117             .
+000118         2000-FIM-PROCESSAR.
+000119             EXIT
+000120             .
+000121
+000122         3000-FINALIZAR.
+000123             *> fecha o arquivo
+000124             CLOSE ARQ-DIVERG
+000125             IF NOT WS-FS-ENTRADA-OK
+000126                DISPLAY 'FATRESUM - ERRO NO CLOSE DE DIVIN. FS='
+000127                       WS-FS-ENTRADA
+000128                PERFORM 9900-ENCERRAR-COM-ERRO
+000129                   THRU 9900-FIM-ENCERRAR
+000130             END-IF
+000131
+000132             *> prova real matematica das quantidades
+000133             ADD WS-QTD-PS WS-QTD-FS WS-QTD-PM
+000134                GIVING WS-QTD-PROVA
+000135
+000136             IF WS-QTD-PROVA NOT = WS-QTD-LIDOS
+000137                DISPLAY 'FATRESUM - ERRO PROVA REAL (RC=16). SOMA='
+000138                       WS-QTD-PROVA ' LIDOS=' WS-QTD-LIDOS
+000139                PERFORM 9900-ENCERRAR-COM-ERRO
+000140                   THRU 9900-FIM-ENCERRAR
+000141             END-IF
+000142
+000143             *> soma os totais gerais
+GnuCOBOL 3.3-dev.0      sistema\work\FATRESU Wed Nov 11 2026 17:31:50  Page 0004
 
 LINE    PG/LN  A...B............................................................
 
-000144             DISPLAY 'VALOR DA FATURA: R$ ' WS-MASK-FATURA
-000145             DISPLAY 'VALOR PAGO:      R$ ' WS-MASK-PAGO
-000146             DISPLAY ' '
-000147
-000148             DISPLAY '--- FATURAS SEM PAGAMENTO (FS) ---'
-000149             MOVE WS-QTD-FS      TO WS-MASK-QTD
-000150             MOVE WS-FATURA-FS   TO WS-MASK-FATURA
-000151             MOVE WS-PAGO-FS     TO WS-MASK-PAGO
-000152             DISPLAY 'QTD: ' WS-MASK-QTD
-000153             DISPLAY 'VALOR DA FATURA: R$ ' WS-MASK-FATURA
-000154             DISPLAY 'VALOR PAGO:      R$ ' WS-MASK-PAGO
+000144             ADD WS-FATURA-PS WS-FATURA-FS WS-FATURA-PM
+000145                GIVING WS-FATURA-TOTAL
+000146             ADD WS-PAGO-PS WS-PAGO-FS WS-PAGO-PM
+000147                GIVING WS-PAGO-TOTAL
+000148
+000149             *> imprimir o relatorio
+000150             DISPLAY '=================================================='
+000151             DISPLAY '   RESUMO DE DIVERGENCIAS'
+000152             DISPLAY '=================================================='
+000153             MOVE WS-QTD-LIDOS TO WS-MASK-QTD
+000154             DISPLAY 'TOTAL DE REGISTROS LIDOS: ' WS-MASK-QTD
 000155             DISPLAY ' '
 000156
-000157             DISPLAY '--- PAGAMENTOS A MENOR (PM) ------'
-000158             MOVE WS-QTD-PM      TO WS-MASK-QTD
-000159             MOVE WS-FATURA-PM   TO WS-MASK-FATURA
-000160             MOVE WS-PAGO-PM     TO WS-MASK-PAGO
+000157             DISPLAY '--- PAGAMENTOS SEM FATURA (PS) ---'
+000158             MOVE WS-QTD-PS      TO WS-MASK-QTD
+000159             MOVE WS-FATURA-PS   TO WS-MASK-FATURA
+000160             MOVE WS-PAGO-PS     TO WS-MASK-PAGO
 000161             DISPLAY 'QTD: ' WS-MASK-QTD
 000162             DISPLAY 'VALOR DA FATURA: R$ ' WS-MASK-FATURA
 000163             DISPLAY 'VALOR PAGO:      R$ ' WS-MASK-PAGO
 000164             DISPLAY ' '
 000165
-000166             DISPLAY '--- TOTAIS GERAIS ----------------'
-000167             MOVE WS-FATURA-TOTAL TO WS-MASK-FATURA
-000168             MOVE WS-PAGO-TOTAL   TO WS-MASK-PAGO
-000169             DISPLAY 'VALOR TOTAL FATURADO: R$ ' WS-MASK-FATURA
-000170             DISPLAY 'VALOR TOTAL PAGO:     R$ ' WS-MASK-PAGO
-000171             DISPLAY '=================================================='
-000172             .
-000173         3000-FIM-FINALIZAR.
-000174             EXIT
-000175             .
-000176
-000177         8000-LER-DIVERGENCIA.
-000178             READ ARQ-DIVERG
-000179                  AT END
-000180                     CONTINUE
-000181             END-READ
-000182
-000183             *> teste de file status apos a leitura
-000184             IF NOT WS-FS-ENTRADA-OK AND NOT WS-FS-ENTRADA-FIM
-000185                DISPLAY 'FATRESUM - ERRO NO READ. FS='
-000186                          WS-FS-ENTRADA
-000187                PERFORM 9900-ENCERRAR-COM-ERRO
-000188                   THRU 9900-FIM-ENCERRAR
-000189             END-IF
+000166             DISPLAY '--- FATURAS SEM PAGAMENTO (FS) ---'
+000167             MOVE WS-QTD-FS      TO WS-MASK-QTD
+000168             MOVE WS-FATURA-FS   TO WS-MASK-FATURA
+000169             MOVE WS-PAGO-FS     TO WS-MASK-PAGO
+000170             DISPLAY 'QTD: ' WS-MASK-QTD
+000171             DISPLAY 'VALOR DA FATURA: R$ ' WS-MASK-FATURA
+000172             DISPLAY 'VALOR PAGO:      R$ ' WS-MASK-PAGO
+000173             DISPLAY ' '
+000174
+000175             DISPLAY '--- PAGAMENTOS A MENOR (PM) ------'
+000176             MOVE WS-QTD-PM      TO WS-MASK-QTD
+000177             MOVE WS-FATURA-PM   TO WS-MASK-FATURA
+000178             MOVE WS-PAGO-PM     TO WS-MASK-PAGO
+000179             DISPLAY 'QTD: ' WS-MASK-QTD
+000180             DISPLAY 'VALOR DA FATURA: R$ ' WS-MASK-FATURA
+000181             DISPLAY 'VALOR PAGO:      R$ ' WS-MASK-PAGO
+000182             DISPLAY ' '
+000183
+000184             DISPLAY '--- TOTAIS GERAIS ----------------'
+000185             MOVE WS-FATURA-TOTAL TO WS-MASK-FATURA
+000186             MOVE WS-PAGO-TOTAL   TO WS-MASK-PAGO
+000187             DISPLAY 'VALOR TOTAL FATURADO: R$ ' WS-MASK-FATURA
+000188             DISPLAY 'VALOR TOTAL PAGO:     R$ ' WS-MASK-PAGO
+000189             DISPLAY '=================================================='
 000190             .
-000191         8000-FIM-LER-DIVERGENCIA.
+000191         3000-FIM-FINALIZAR.
 000192             EXIT
 000193             .
 000194
-000195         9900-ENCERRAR-COM-ERRO.
-GnuCOBOL 3.3-dev.0      sistema\work\FATRESU Wed Nov 11 2026 10:18:34  Page 0005
+000195         8000-LER-DIVERGENCIA.
+GnuCOBOL 3.3-dev.0      sistema\work\FATRESU Wed Nov 11 2026 17:31:50  Page 0005
 
 LINE    PG/LN  A...B............................................................
 
-000196             MOVE 16 TO RETURN-CODE
-000197             STOP RUN
-000198             .
-000199         9900-FIM-ENCERRAR.
-000200             EXIT
-000201             .
+000196             READ ARQ-DIVERG
+000197                  AT END
+000198                     CONTINUE
+000199             END-READ
+000200
+000201             *> teste de file status apos a leitura
+000202             IF NOT WS-FS-ENTRADA-OK AND NOT WS-FS-ENTRADA-FIM
+000203                DISPLAY 'FATRESUM - ERRO NO READ. FS='
+000204                          WS-FS-ENTRADA
+000205                PERFORM 9900-ENCERRAR-COM-ERRO
+000206                   THRU 9900-FIM-ENCERRAR
+000207             END-IF
+000208             .
+000209         8000-FIM-LER-DIVERGENCIA.
+000210             EXIT
+000211             .
+000212
+000213         9900-ENCERRAR-COM-ERRO.
+000214             MOVE 16 TO RETURN-CODE
+000215             STOP RUN
+000216             .
+000217         9900-FIM-ENCERRAR.
+000218             EXIT
+000219             .
 warning: line not terminated by a newline
 
 
-GnuCOBOL 3.3-dev.0      sistema\work\FATRESU Wed Nov 11 2026 10:18:34  Page 0006
+GnuCOBOL 3.3-dev.0      sistema\work\FATRESU Wed Nov 11 2026 17:31:50  Page 0006
 
 Error/Warning summary:
 
-sistema\work\FATRESUM.cbl:201: warning: line not terminated by a newline
+sistema\work\FATRESUM.cbl:219: warning: line not terminated by a newline
 
 1 warning in compilation group
 0 errors in compilation group
