@@ -285,7 +285,7 @@
                      MOVE '57' TO LG-RESPOSTA
                      MOVE 'EXTERIOR SEM HABILITACAO' TO LG-DESC-RESPOSTA
                      ADD 1 TO WS-QTD-57
-                WHEN PD-COMPRA AND PD-SAQUE > WS-CT-SAQUE(IX-CT)
+                WHEN PD-SAQUE AND PD-VALOR > WS-CT-SAQUE(IX-CT)
                      MOVE '61' TO LG-RESPOSTA
                      MOVE 'SAQUE ACIMA DO LIMITE DE SAQUE'
                             TO LG-DESC-RESPOSTA
