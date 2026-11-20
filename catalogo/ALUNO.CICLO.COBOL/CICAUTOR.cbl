@@ -259,13 +259,45 @@
       *    61 SAQUE ACIMA DO LIMITE DE SAQUE
       *    51 VALOR ACIMA DO DISPONIVEL   OTHER: PERFORM 2300-APROVAR
       *    POR ENQUANTO, SO A PRIMEIRA REGRA ESTA PRONTA.
-           IF WS-CONTA-NAO-ENCONTRADA
-              MOVE '14' TO LG-RESPOSTA
-              MOVE 'CARTAO INEXISTENTE' TO LG-DESC-RESPOSTA
-              ADD 1 TO WS-QTD-14
-           ELSE
-              PERFORM 2300-APROVAR THRU 2300-FIM-APROVAR
-           END-IF
+           EVALUATE TRUE
+                WHEN WS-CONTA-NAO-ENCONTRADA
+                     MOVE '14' TO LG-RESPOSTA
+                     MOVE 'CARTAO NAO ENCONTRADO' TO LG-DESC-RESPOSTA
+                     ADD 1 TO WS-QTD-14
+                WHEN WS-CT-STATUS(IX-CT) NOT = 'A'
+                     MOVE '05' TO LG-RESPOSTA
+                     MOVE 'CARTAO NAO AUTORIZADO' TO LG-DESC-RESPOSTA
+                     ADD 1 TO WS-QTD-05
+                WHEN WS-CT-VALIDADE(IX-CT) < PD-ANO-MES
+                     MOVE '54' TO LG-RESPOSTA
+                     MOVE 'CARTAO VENCIDO' TO LG-DESC-RESPOSTA
+                     ADD 1 TO WS-QTD-54
+                WHEN PD-CODIGO-NAO-CONFERE
+                     MOVE '05' TO LG-RESPOSTA
+                     MOVE 'COD DE SEGURANCA NAO CONFERE'
+                            TO LG-DESC-RESPOSTA
+                     ADD 1 TO WS-QTD-05
+                WHEN PD-SENHA-NAO-CONFERE
+                     MOVE '55' TO LG-RESPOSTA
+                     MOVE 'SENHA NAO CONFERE' TO LG-DESC-RESPOSTA
+                     ADD 1 TO WS-QTD-55
+                WHEN NOT PD-NACIONAL AND WS-CT-EXTERIOR(IX-CT) = 'N'
+                     MOVE '57' TO LG-RESPOSTA
+                     MOVE 'EXTERIOR SEM HABILITACAO' TO LG-DESC-RESPOSTA
+                     ADD 1 TO WS-QTD-57
+                WHEN PD-COMPRA AND PD-VALOR > WS-CT-SAQUE(IX-CT)
+                     MOVE '61' TO LG-RESPOSTA
+                     MOVE 'SAQUE ACIMA DO LIMITE DE SAQUE'
+                            TO LG-DESC-RESPOSTA
+                     ADD 1 TO WS-QTD-61
+                WHEN PD-VALOR > WS-CT-DISP(IX-CT)
+                     MOVE '51' TO LG-RESPOSTA
+                     MOVE 'VALOR ACIMA DO DISPONIVEL'
+                            TO LG-DESC-RESPOSTA
+                     ADD 1 TO WS-QTD-51
+                WHEN OTHER
+                        PERFORM 2300-APROVAR THRU 2300-FIM-APROVAR
+              END-EVALUATE
            IF NOT LG-APROVADA
               ADD 1 TO WS-QTD-NEGADAS
            END-IF
