@@ -280,21 +280,6 @@
                     MOVE 0.0500 TO WS-TX-BANDEIRA
            END-EVALUATE
 
-      *    A ESCREVER (AO VIVO): ESCOLHER AS TAXAS PELO PRODUTO DO BIN
-      *    (WS-BIN-PRODUTO(IX-BIN): C, D OU P) E CALCULAR, COM ROUNDED:
-      *    WS-VL-MDR, WS-VL-INTERCAMBIO E WS-VL-BANDEIRA. DEPOIS:
-      *    CREDENCIADOR = MDR - INTERCAMBIO - BANDEIRA
-      *    LIQUIDO = VALOR - MDR
-      *    E SOMAR TUDO NOS TOTAIS (WS-TT-...).
-           
-           *> multiplicando (aqui deu errado esqueci de dividir por 100)
-      *     MULTIPLY PD-VALOR BY WS-TX-MDR 
-      *        GIVING WS-VL-MDR ROUNDED
-      *     MULTIPLY PD-VALOR BY WS-TX-INTERCAMBIO
-      *        GIVING WS-VL-INTERCAMBIO ROUNDED
-      *     MULTIPLY PD-VALOR BY WS-TX-BANDEIRA
-      *        GIVING WS-VL-BANDEIRA ROUNDED
-
            *> multiplicando (corrigido dividindo por 100)
            COMPUTE WS-VL-MDR ROUNDED = 
                     (PD-VALOR * WS-TX-MDR) / 100
@@ -314,7 +299,6 @@
               ADD WS-VL-CREDENCIADOR TO WS-TT-CREDENCIADOR
                  ADD WS-VL-LIQUIDO     TO WS-TT-LIQUIDO
                     ADD PD-VALOR TO WS-TT-VALOR
-           
            .
        2200-FIM-DIVIDIR-VALOR.
            EXIT.
